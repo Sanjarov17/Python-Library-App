@@ -2,9 +2,7 @@
 Kutubxona Boshqaruv Tizimi (Library Management System)
 CLI ilova - kitoblarni qo'shish, ko'rish, o'chirish, yangilash va qidirish
 """
-
 import sys
-
 from rich.console import Console
 from rich.table import Table
 
@@ -12,84 +10,73 @@ console = Console()
 
 
 def add_book(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Foydalanuvchidan kitob nomi, muallif va yilni qabul qiladi.
-    Ularni tekshiradi va listga yangi kitob qo'shadi (status default = False).
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
+    title = input("Kitob nomi: ").strip()
+    author = input("Muallif: ").strip()
+    year = input("Yili: ").strip()
+
+    if not year.isdigit():
+        print("Yil notogri kiritildi!")
+        return
+
+    library.append([title, author, int(year), False])
+    print("Kitob muvaffaqiyatli qoshildi!")
 
 
 def show_books(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Kutubxonadagi barcha kitoblarni jadval ko'rinishida chiqaradi.
-    Agar library bo'sh bo'lsa, mos xabar beradi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
+    if not library:
+        print("Kutubxona bosh...")
+        return
+
+    table = Table(title="Kutubxona kitoblari")
+    table.add_column("raqami")
+    table.add_column("Nom")
+    table.add_column("Muallif")
+    table.add_column("Yil")
+    table.add_column("Holat")
+
+    for i, book in enumerate(library, start=1):
+        status = "Oqilgan" if book[3] else "Oqilmagan"
+        table.add_row(str(i), book[0], book[1], str(book[2]), status)
+
+    console.print(table) 
 
 
 def delete_book(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Indeks bo'yicha kitobni o'chiradi.
-    Avval kitoblar ro'yxati ko'rsatiladi, so'ng tanlangan indeks tekshiriladi va o'chiriladi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
+    show_books(library)
+    index = input("Ochirish uchun indeksni kiriting: ")
 
+    if not index.isdigit():
+        print("Faqat raqam kiriting!")
+        return
 
-def update_book(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Indeks bo'yicha tanlangan kitobning title va author qiymatlarini yangilaydi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
-
-
-def change_status(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Indeks bo'yicha tanlangan kitobning statusini (o'qilgan/o'qilmagan) almashtiradi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
-
-
-def search_books(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Foydalanuvchidan qidirish parametri olinadi (nom, muallif yoki yil).
-    Mos keladigan kitoblarni chiqaradi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
-
-
-def filter_books(library: list[list[str, str, int, bool]]) -> None:
-    """
-    Status bo'yicha filterlash: faqat o'qilgan yoki faqat o'qilmagan kitoblarni chiqaradi.
-    
-    Args:
-        library: Kitoblar ro'yxati - har bir kitob [title, author, year, status] formatida
-    """
-    pass
+    index = int(index) - 1
+    if 0 <= index < len(library):
+        removed = library.pop(index)
+        print(f"{removed[0]} o‘chirildi!")
+    else:
+        print("Notogri indeks!")
 
 
 def main():
-    """
-    Asosiy funksiya - menyuni ko'rsatadi va foydalanuvchi tanloviga qarab 
-    yuqoridagi funksiyalarni chaqiradi.
-    """
-    library: list[list[str, str, int, bool]] = []  # [title, author, year, status]
+    library: list[list[str, str, int, bool]] = []
 
+    while True:
+        print("\n=== KUTUBXONA MENYUSI ===")
+        print("1. Kitob qoshish")
+        print("2. Kitoblarni korish")
+        print("3. Kitobni ochirish")
+        print("0. Chiqish")
+
+        choice = input("Tanlov: ")
+
+        if choice == "1":
+            add_book(library)
+        elif choice == "2":
+            show_books(library)
+        elif choice == "3":
+            delete_book(library)
+        elif choice == "0":
+            sys.exit()
+        else:
+            print("Notogri tanlov!")
 main()
